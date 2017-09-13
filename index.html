@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title> Metsa trial form </title>
+
+    <link rel="stylesheet" href="app.css">
+</head>
+<body>
+<h1> Add new brand </h1>
+
+<form id="add-form" action="handle-form.php" >
+    <input id="name" placeholder="name" name="contact-name">
+    <button type="submit">add</button>
+</form>
+
+<table id="list-table">
+    <thead>
+    <th>
+        Name
+    </th>
+    <th>
+        Amount
+    </th>
+    <th colspan="2">
+        Note
+    </th>
+    </thead>
+    <tr>
+        <td>
+            Lambi
+        </td>
+        <td>
+            -
+        </td>
+        <td>
+            -
+        </td>
+        <td class="actions">
+            <a href="#" data-action="edit">edit</a> |
+            <a href="#" data-action="delete">delete</a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Serla
+        </td>
+        <td>
+            -
+        </td>
+        <td>
+            -
+        </td>
+        <td class="actions">
+            <a href="#" data-action="edit">edit</a> |
+            <a href="#" data-action="delete">delete</a>
+        </td>
+    </tr>
+
+</table>
+<br>
+<button id="saveForm">Save </button>
+
+
+
+<script src="app.js"></script>
+</body>
+</html>
