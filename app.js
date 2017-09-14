@@ -1,21 +1,24 @@
 /**
  * Created by tehetenamasresha on 12/09/2017.
  */
+const prod01 = document.getElementById("prod_01")
+const $form = document.querySelector('#add-form')
+const $table = document.querySelector('#list-table')
+const saveForm = document.querySelector('#saveForm')
 
-var $form = document.querySelector('#add-form')
-var $table = document.querySelector('#list-table')
+
 
 $form.addEventListener('submit', function (event) {
     event.preventDefault()
 
-    var name = document.querySelector('#name').value
-    var $row = document.createElement('tr')
+    const name = document.querySelector('#name').value
+    const $row = document.createElement('tr')
     $row.innerHTML = `
     <td>
       ${name}
     </td>
-    <td>
-      -
+    <td name="amt" placeholder="00">
+     
     </td>
     <td>
       -
@@ -33,20 +36,20 @@ $form.addEventListener('submit', function (event) {
 $table.addEventListener('click', function (event) {
     event.preventDefault()
 
-    var $button = event.target
-    var $row = $button.closest('tr')
-    var action = $button.dataset.action
-    var $inputs
-    var name
-    var contact
-    var note
+    const $button = event.target
+    const $row = $button.closest('tr')
+    const action = $button.dataset.action
+    let $inputs
+    let name
+    let contact
+    let note
 
     if (action === 'delete') {
         $row.remove()
     }
 
     if (action === 'edit') {
-        var $cells = $row.querySelectorAll('td')
+        const $cells = $row.querySelectorAll('td')
         name = $cells[0].textContent.trim()
         contact = $cells[1].textContent.trim()
         note = $cells[2].textContent.trim()
@@ -78,7 +81,7 @@ $table.addEventListener('click', function (event) {
       <td>
         ${name}
       </td>
-      <td>
+      <td name="amt">
         ${contact}
       </td>
       <td>
@@ -89,6 +92,8 @@ $table.addEventListener('click', function (event) {
         <a href="#" data-action="delete">delete</a>
       </td>
     `
+        console.log(name)
+
     }
 
     if (action === 'cancel') {
@@ -114,3 +119,17 @@ $table.addEventListener('click', function (event) {
     `
     }
 })
+
+//saveForm.onclick= function () {
+    //location.href = "products.html"
+    const arr = document.getElementsByName('amt');
+    let tot=2;
+    for(let i=0;i<arr.length;i++){
+        if(parseInt(arr[i].value))
+            tot += parseInt(arr[i].value);
+    }
+    document.getElementById('total').value = tot;
+
+
+//}
+
