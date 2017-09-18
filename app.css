@@ -129,15 +129,14 @@ input, textarea {
     margin: 1rem 0;
     font: inherit;
 }
-
-/*button {
+button {
     border: 0;
     padding: .5em 1em;
     font: inherit;
     border-radius: 1em;
-    background-color:#88ff4d; /* Green }
+    background-color:#88ff4d; }
 
- */
+
 
 
 table {
@@ -173,11 +172,7 @@ table textarea {
     min-width: 300px;
     height: 6em;
 }
-a:-webkit-any-link {
-    color: -webkit-link;
-    cursor: auto;
-    text-decoration: underline;
-}
+
 #saveForm {
     position: absolute;
     right:30px;
