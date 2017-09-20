@@ -1,11 +1,11 @@
-var myApp = angular.module('myApp', ['ngRoute']);
+const myApp = angular.module('myApp', ['ngRoute']);
 
 myApp.config(function ($routeProvider) {
 
     $routeProvider
 
         .when('/', {
-            templateUrl: 'pages/productList.html',
+            templateUrl: 'login.html',
             controller: 'mainController'
         })
 
@@ -15,6 +15,14 @@ myApp.config(function ($routeProvider) {
         })
         .when('/product1', {
             templateUrl: 'pages/forms.html',
+            controller: 'secondController'
+        })
+        .when('/productlist', {
+            templateUrl: 'pages/productList.html',
+            controller: 'secondController'
+        })
+        .when('/location', {
+            templateUrl: 'pages/location.html',
             controller: 'secondController'
         })
 });
