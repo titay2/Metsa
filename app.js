@@ -1,4 +1,5 @@
 const myApp = angular.module('myApp', ['ngRoute']);
+const form = document.getElementById("add-form")
 
 myApp.config(function ($routeProvider) {
 
@@ -19,20 +20,26 @@ myApp.config(function ($routeProvider) {
         })
         .when('/productlist', {
             templateUrl: 'pages/productList.html',
-            controller: 'secondController'
+            controller: 'productController'
         })
         .when('/location', {
             templateUrl: 'pages/location.html',
-            controller: 'secondController'
+            controller: 'locationController'
         })
 });
 
-myApp.controller('mainController', ['$scope', '$log', function($scope, $log) {
+
+
+
+myApp.controller('locationController', ['$scope',
+    function($scope, ) {
+
+    }]);
+
+
+myApp.controller('mainController', ['$scope',
+    function($scope) {
 
 
 }]);
 
-myApp.controller('secondController', ['$scope', '$log', function($scope, $log) {
-
-
-}]);
