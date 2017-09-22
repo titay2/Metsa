@@ -1,37 +1,28 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="myApp">
-<head>
-    <meta charset="UTF-8">
-    <title>location</title>
-    <link rel="stylesheet" href="../app.css">
 
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
-    <meta charset="UTF-8">
-
-    <!-- load bootstrap and fontawesome via CDN -->
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
-
-    <!-- load angular via CDN -->
-
-    <script src="//code.angularjs.org/1.3.0-rc.1/angular.min.js"></script>
-    <script src="../app.js"></script>
-
-</head>
-<body>
 
 <h1>
     Add a location
 </h1>
 <form id="add-form" >
-    <input id="name" ng-model="location" placeholder="name" name="name">
-    <input id="depth" placeholder="depth in cm" name="depth">
+    <input id="city" ng-model="shops.name" placeholder="name of the city">
+    <input id="depth" placeholder="depth in cm" ng-model="shops.depth">
     <br>
-    <button type="submit">add</button>
+    <button type="submit" ng-click="add()">add</button>
 </form>
 
-git
 <br>
 <br>
+<div id="container" ng-repeat="shops in city.shops">
+<a href="#/productlist">
+    <div class="button_base b05_3d_roll" data-shelvdept="90">
+        <div>{{shops.name}}</div>
+        <div>{{shops.name}}</div>
+
+    </div>
+</a>
+<button class="btn" ng-click="remove($index)">X</button>
+</div>
+
 <a href="#/productlist">
     <div class="button_base b05_3d_roll" data-shelvdept="90">
         <div>Sello K-citymarket</div>
@@ -51,6 +42,3 @@ git
 
 <br>
 <br>
-
-</body>
-</html>

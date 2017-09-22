@@ -1,5 +1,4 @@
 const myApp = angular.module('myApp', ['ngRoute']);
-const form = document.getElementById("add-form")
 
 myApp.config(function ($routeProvider) {
 
@@ -28,18 +27,41 @@ myApp.config(function ($routeProvider) {
         })
 });
 
+//SERVICES
+
+myApp.service('cityService', function() {
+
+    this.loc = "New York, NY";
+
+});
 
 
 
-myApp.controller('locationController', ['$scope',
-    function($scope, ) {
 
-    }]);
+myApp.controller('locationController', ['$scope', 'cityService', function($scope, cityService) {
+    $scope.loc = cityService.loc;
 
+    $scope.$watch('loc', function() {
+        cityService.loc = $scope.loc;
+    });
+   $scope.city={
+       shops: [
+           {name: 'sello prisma', depth: "80"},
 
-myApp.controller('mainController', ['$scope',
-    function($scope) {
-
-
+           {name: 'sello Kmarket', depth: "80"}
+    ]
+}
+$scope.remove = function (index) {
+       $scope.city.shops.splice(index, 1)
+}
+$scope.add = function () {
+    $scope.shops.push = $scope.city
+    console.log($scope.city.shops)
+}
 }]);
 
+
+myApp.controller('productController', ['$scope', '$routeParams', 'cityService', function($scope, $routeParams, cityService) {
+    $scope.city = cityService.city;
+
+}]);
