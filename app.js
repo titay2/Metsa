@@ -1,4 +1,6 @@
 const myApp = angular.module('myApp', ['ngRoute']);
+let market = JSON.parse(localStorage.getItem('market') || '[]' );
+const local = document.getElementById('local')
 
 myApp.config(function ($routeProvider) {
 
@@ -44,20 +46,38 @@ myApp.controller('locationController', ['$scope', 'cityService', function($scope
     $scope.$watch('loc', function() {
         cityService.loc = $scope.loc;
     });
-   $scope.city={
-       shops: [
-           {name: 'sello prisma', depth: "80"},
 
-           {name: 'sello Kmarket', depth: "80"}
-    ]
+
+//market.forEach(function (mark) {
+  // console.log("test")
+    //const ink = document.createElement('a')
+   //ink.innerHTML= `
+  // <div class="button_base b05_3d_roll" data-shelvdept="90">
+    //  <div>${mark.name||'-'}</div>
+      //<div>${mark.name ||'-' }</div>
+  // </div>
+
+//`
+    //local.appendChild(ink)
+//})
+
+$scope.add = function (shops) {
+
+    market.push({
+        chain:shops.chain,
+        name : shops.name,
+        address : shops.address,
+        phone : shops.phone,
+        contactP : shops.contactP,
+        module: shops.module,
+        depth : shops.depth
+    })
+    localStorage.setItem('market', JSON.stringify(market))
+    console.log($scope.markets)
+
 }
-$scope.remove = function (index) {
-       $scope.city.shops.splice(index, 1)
-}
-$scope.add = function () {
-    $scope.shops.push = $scope.city
-    console.log($scope.city.shops)
-}
+    $scope.markets = market
+
 }]);
 
 
