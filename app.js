@@ -64,7 +64,7 @@ myApp.controller('locationController', ['$scope', 'cityService', function($scope
 $scope.add = function (shops) {
 
     market.push({
-        chain:shops.chain,
+        chain:shops.chain ,
         name : shops.name,
         address : shops.address,
         phone : shops.phone,
