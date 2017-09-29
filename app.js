@@ -1,4 +1,4 @@
-const myApp = angular.module('myApp', ['ngRoute']);
+const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap']);
 let market = JSON.parse(localStorage.getItem('market') || '[]' );
 const local = document.getElementById('local')
 
@@ -40,31 +40,33 @@ myApp.service('cityService', function() {
 
 
 
-myApp.controller('locationController', ['$scope', 'cityService', function($scope, cityService) {
+myApp.controller('locationController', ['$scope', '$modal', '$log','cityService', function($scope,$log,$modal,cityService) {
     $scope.loc = cityService.loc;
 
     $scope.$watch('loc', function() {
         cityService.loc = $scope.loc;
     });
 
-
-//market.forEach(function (mark) {
-  // console.log("test")
-    //const ink = document.createElement('a')
-   //ink.innerHTML= `
-  // <div class="button_base b05_3d_roll" data-shelvdept="90">
-    //  <div>${mark.name||'-'}</div>
-      //<div>${mark.name ||'-' }</div>
-  // </div>
-
-//`
-    //local.appendChild(ink)
-//})
+    $scope.processForm = function(shops) {
+        console.log(shops.name)
+        market.push({
+            chain:shops.chain,
+            name : shops.name,
+            address : shops.address,
+            phone : shops.phone,
+            contactP : shops.contactP,
+            module: shops.module,
+            depth : shops.depth
+        })
+        localStorage.setItem('market', JSON.stringify(market))
+        console.log($scope.markets)
+        $scope.showTheForm = false;
+    }
 
 $scope.add = function (shops) {
 
     market.push({
-        chain:shops.chain ,
+        chain:shops.chain,
         name : shops.name,
         address : shops.address,
         phone : shops.phone,
@@ -76,9 +78,19 @@ $scope.add = function (shops) {
     console.log($scope.markets)
 
 }
-    $scope.markets = market
+    $scope.markets = market;
+
+
+
 
 }]);
+
+myApp.controller("modalAccountFormController", ['$scope', '$modal', '$log',
+
+    function ($scope, $modal, $log) {
+
+
+    }]);
 
 
 myApp.controller('productController', ['$scope', '$routeParams', 'cityService', function($scope, $routeParams, cityService) {
