@@ -1,6 +1,5 @@
-const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap']);
-let market = JSON.parse(localStorage.getItem('market') || '[]' );
-const local = document.getElementById('local')
+const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
+const market = JSON.parse(localStorage.getItem('market') || '[]' )
 
 myApp.config(function ($routeProvider) {
 
@@ -63,21 +62,7 @@ myApp.controller('locationController', ['$scope', '$modal', '$log','cityService'
         $scope.showTheForm = false;
     }
 
-$scope.add = function (shops) {
 
-    market.push({
-        chain:shops.chain,
-        name : shops.name,
-        address : shops.address,
-        phone : shops.phone,
-        contactP : shops.contactP,
-        module: shops.module,
-        depth : shops.depth
-    })
-    localStorage.setItem('market', JSON.stringify(market))
-    console.log($scope.markets)
-
-}
     $scope.markets = market;
 
 
@@ -85,9 +70,98 @@ $scope.add = function (shops) {
 
 }]);
 
-myApp.controller("modalAccountFormController", ['$scope', '$modal', '$log',
-
+myApp.controller("secondController", ['$scope', '$modal', '$log',
     function ($scope, $modal, $log) {
+        var _scannerIsRunning = false;
+        function startScanner() {
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#scanner-container'),
+                    constraints: {
+                        width: 480,
+                        height: 320,
+                        facingMode: "environment"
+                    },
+                },
+                decoder: {
+                    readers: [
+                        "ean_reader"
+
+                    ],
+                    debug: {
+                        showCanvas: true,
+                        showPatches: true,
+                        showFoundPatches: true,
+                        showSkeleton: true,
+                        showLabels: true,
+                        showPatchLabels: true,
+                        showRemainingPatchLabels: true,
+                        boxFromPatches: {
+                            showTransformed: true,
+                            showTransformedBox: true,
+                            showBB: true
+                        }
+                    }
+                },
+
+            }, function (err) {
+                if (err) {
+                    console.log(err);
+                    return
+                }
+
+                console.log("Initialization finished. Ready to start");
+                Quagga.start();
+
+                // Set flag to is running
+                _scannerIsRunning = true;
+            });
+            Quagga.onProcessed(function (result) {
+                var drawingCtx = Quagga.canvas.ctx.overlay,
+                    drawingCanvas = Quagga.canvas.dom.overlay;
+
+                if (result) {
+                    if (result.boxes) {
+                        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                        result.boxes.filter(function (box) {
+                            return box !== result.box;
+                        }).forEach(function (box) {
+                            Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: "green", lineWidth: 2 });
+                        });
+                    }
+
+                    if (result.box) {
+                        Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: "#00F", lineWidth: 2 });
+                    }
+
+                    if (result.codeResult && result.codeResult.code) {
+                        Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
+                    }
+                }
+            });
+
+
+            Quagga.onDetected(function (result) {
+                console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
+                $scope.eanValue=  result.codeResult.code
+
+            });
+        }
+
+
+        // Start/stop scanner
+        document.getElementById("btn").addEventListener("click", function () {
+            if (_scannerIsRunning) {
+                Quagga.stop();
+            } else {
+                startScanner();
+            }
+        }, false);
+
+
+
 
 
     }]);

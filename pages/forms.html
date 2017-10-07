@@ -1,12 +1,6 @@
-<form id="add-form" >
-    <input id="chain" ng-model="shops.chain" placeholder="chain of the shop">
-    <input id="name" placeholder="name of the shop" ng-model="shops.name">
-    <input id="address" placeholder="address" ng-model="shops.address">
-    <input id="phone" placeholder="phone number" ng-model="shops.phone">
-    <input id="contactP" placeholder="name of contact number" ng-model="shops.contactP">
-    <input id="module" placeholder="number of modules" ng-model="shops.module">
-    <input id="depth" placeholder="depth in cm" ng-model="shops.depth">
-    <br>
-    <button type="submit" ng-click="add(shops)">add</button>
-</form>
 
+<!-- Div to show the scanner -->
+<div id="scanner-container"></div>
+<input type="button" id="btn" value="Start/Stop the scanner" />
+
+<div>code : {{eanValue}}</div>

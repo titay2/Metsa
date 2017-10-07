@@ -176,3 +176,9 @@ table textarea {
     position: absolute;
     right:30px;
 }
+
+canvas.drawing, canvas.drawingBuffer {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
