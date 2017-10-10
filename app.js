@@ -1,5 +1,6 @@
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
+const local = document.getElementById('local')
 
 myApp.config(function ($routeProvider) {
 
@@ -144,10 +145,44 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
 
 
             Quagga.onDetected(function (result) {
-                console.log("Barcode detected and processed : [" + result.codeResult.code + "]", result);
-                $scope.eanValue=  result.codeResult.code
+
+                $.getJSON("content.json", function(json) {
+                    console.log(json.resort); // this will show the info it in firebug console
+                    for (var i = 0; i < json.resort.length; i++) {
+                        var eanvalue = json.resort[i].id
+                        console.log(eanvalue);
+                        if (result.codeResult.code === eanvalue) {
+                            codes = document.querySelector('#codes')
+                            codes.innerHTML = result.codeResult.code
+                            console.log("Barcode detected and processed : [" + result.codeResult.code + "]");
+
+
+                        }else {
+                            console.log("not found")
+                        }
+
+                    }
+                })
+
+
+
+
+
+                //let codes;
+                //let codde = "6415711800544"
+               // if (result.codeResult.code === codde) {
+                   // codes = document.querySelector('#codes')
+                   // codes.innerHTML = result.codeResult.code
+                 //   console.log("Barcode detected and processed : [" + result.codeResult.code + "]");
+
+
+               // }
+
+
+                //$scope.eanValue =  result.codeResult.code
 
             });
+
         }
 
 
@@ -155,11 +190,11 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
         document.getElementById("btn").addEventListener("click", function () {
             if (_scannerIsRunning) {
                 Quagga.stop();
+
             } else {
                 startScanner();
             }
         }, false);
-
 
 
 
