@@ -3,4 +3,66 @@
 <div id="scanner-container"></div>
 <input type="button" id="btn" value="Start/Stop the scanner" />
 
-<div id = "codes">{{eanValue}} </div>
+<div id = "code"> </div>
+<div id = "pname"> </div>
+<div id = "rowss"> </div>
+
+<br>
+<br>
+<br>
+<br>
+
+
+
+<table id="list-table">
+    <thead>
+    <th>
+        Product name
+    </th>
+    <th>
+        EAN Code
+    </th>
+    <th colspan="2">
+        Faces
+    </th>
+    </thead>
+</table>
+
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<h5> Add a vew product here </h5>
+
+
+
+<button  ng-click="showTheForm = !showTheForm">New Product</button>
+
+<form ng-show="showTheForm" ng-submit="newProduct(item)">
+    <label>Name</label>
+    <input ng-model="item.pName"  placeholder="name of the product">
+    <label>EAN code</label>
+    <input ng-model="item.eanCode"  placeholder="EAN code" >
+    <br>
+    <label>select a category</label><br>
+    <select ng-model="item.category" ng-options="c for c in categories"  ></select>
+    <br>
+    <br>
+    <label>select a Producer</label><br>
+    <select ng-model="item.producer" ng-options="p for p in producers"  ></select>
+    <br>
+    <br>
+    <label>Length</label><br>
+    <input ng-model="item.pLenght" placeholder="Length in cm" >
+    <label>Height</label><br>
+    <input ng-model="item.pHeight" placeholder="Height in cm" >
+    <label>Width</label><br>
+    <input ng_model="item.pWidth" placeholder="Width in cm" >
+    <br>
+
+    <button>Submit</button>
+    <button type="button" ng-click="showTheForm = false">Cancel</button>
+</form>

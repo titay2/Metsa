@@ -1,6 +1,6 @@
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
-const local = document.getElementById('local')
+const product = JSON.parse(localStorage.getItem('product') || '[]' )
 
 myApp.config(function ($routeProvider) {
 
@@ -73,6 +73,32 @@ myApp.controller('locationController', ['$scope', '$modal', '$log','cityService'
 
 myApp.controller("secondController", ['$scope', '$modal', '$log',
     function ($scope, $modal, $log) {
+
+        $scope.categories = ["ToTi", "HoTo", "Hanks"]
+        $scope.producers = ["MT", "SCA", "Horizon tissue" ]
+        showForm = function () {
+            console.log("clicked")
+        }
+        $scope.newProduct = function (item) {
+            product.push ({
+                pName: item.pName,
+                eanCode : item.eanCode,
+                category : item. category,
+                producer : item.producer,
+                pLenght : item.pLenght,
+                pHeight : item.pHeight,
+                pWidth : item.pWidth,
+                pface : ""
+
+
+            })
+            localStorage.setItem('product', JSON.stringify(product))
+            console.log(product)
+            $scope.showTheForm = false;
+        }
+        $scope.products = product;
+
+
         var _scannerIsRunning = false;
         function startScanner() {
             Quagga.init({
@@ -145,20 +171,44 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
 
 
             Quagga.onDetected(function (result) {
+                let code = document.querySelector('#code')
+                let rowss = document.querySelector('#rowss')
+                var $table = document.querySelector('#list-table')
 
-                $.getJSON("content.json", function(json) {
-                    console.log(json.resort); // this will show the info it in firebug console
-                    for (var i = 0; i < json.resort.length; i++) {
-                        var eanvalue = json.resort[i].id
-                        console.log(eanvalue);
-                        if (result.codeResult.code === eanvalue) {
-                            codes = document.querySelector('#codes')
-                            codes.innerHTML = result.codeResult.code
-                            console.log("Barcode detected and processed : [" + result.codeResult.code + "]");
+                code.innerHTML = result.codeResult.code
+
+                product.forEach(function (aProduct) {
+                    if (aProduct.eanCode === result.codeResult.code) {
+                        console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
+                        pname = document.querySelector('#pname')
+                        pname.innerHTML = aProduct.pName
+                        let row = document.createElement('tr')
+                        row.innerHTML = `
+    <td>
+      ${aProduct.pName}
+    </td>
+    <td>
+      ${aProduct.eanCode}
+    </td>
+    <td>
+      ${''}
+    </td>
+    
+  `
+                        $table.appendChild(row)
+                        Quagga.stop();
 
 
-                        }else {
-                            console.log("not found")
+
+
+
+                    } else {
+                        if ($("#pname").text().length > 7) {
+                            Quagga.stop();
+                            console.log($("#pname").text())
+                        }else{
+                            rowss.innerHTML =  `<button ng-click="" >new product</button>
+`
                         }
 
                     }
@@ -166,20 +216,6 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
 
 
 
-
-
-                //let codes;
-                //let codde = "6415711800544"
-               // if (result.codeResult.code === codde) {
-                   // codes = document.querySelector('#codes')
-                   // codes.innerHTML = result.codeResult.code
-                 //   console.log("Barcode detected and processed : [" + result.codeResult.code + "]");
-
-
-               // }
-
-
-                //$scope.eanValue =  result.codeResult.code
 
             });
 
