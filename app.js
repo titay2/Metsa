@@ -12,8 +12,8 @@ myApp.config(function ($routeProvider) {
         })
 
         .when('/second', {
-            templateUrl: 'pages/forms.html',
-            controller: 'secondController'
+            templateUrl: 'pages/dataTable.html',
+            controller: 'dataController'
         })
         .when('/product1', {
             templateUrl: 'pages/forms.html',
@@ -37,10 +37,9 @@ myApp.service('cityService', function() {
 
 });
 
+//CONTROLLERS
 
-
-
-myApp.controller('locationController', ['$scope', '$modal', '$log','cityService', function($scope,$log,$modal,cityService) {
+myApp.controller('locationController', ['$scope', '$modal', '$log','cityService',, function($scope,$log,$modal,cityService) {
     $scope.loc = cityService.loc;
 
     $scope.$watch('loc', function() {
@@ -62,23 +61,13 @@ myApp.controller('locationController', ['$scope', '$modal', '$log','cityService'
         console.log($scope.markets)
         $scope.showTheForm = false;
     }
-
-
     $scope.markets = market;
-
-
-
-
 }]);
 
-myApp.controller("secondController", ['$scope', '$modal', '$log',
-    function ($scope, $modal, $log) {
-
+myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
+    function ($scope, $modal, $log, $compile) {
         $scope.categories = ["ToTi", "HoTo", "Hanks"]
         $scope.producers = ["MT", "SCA", "Horizon tissue" ]
-        showForm = function () {
-            console.log("clicked")
-        }
         $scope.newProduct = function (item) {
             product.push ({
                 pName: item.pName,
@@ -88,10 +77,9 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
                 pLenght : item.pLenght,
                 pHeight : item.pHeight,
                 pWidth : item.pWidth,
-                pface : ""
-
-
+                pface : 0
             })
+
             localStorage.setItem('product', JSON.stringify(product))
             console.log(product)
             $scope.showTheForm = false;
@@ -99,7 +87,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
         $scope.products = product;
 
 
-        var _scannerIsRunning = false;
+        let _scannerIsRunning = false;
         function startScanner() {
             Quagga.init({
                 inputStream: {
@@ -146,7 +134,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
                 _scannerIsRunning = true;
             });
             Quagga.onProcessed(function (result) {
-                var drawingCtx = Quagga.canvas.ctx.overlay,
+                let drawingCtx = Quagga.canvas.ctx.overlay,
                     drawingCanvas = Quagga.canvas.dom.overlay;
 
                 if (result) {
@@ -172,50 +160,83 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
 
             Quagga.onDetected(function (result) {
                 let code = document.querySelector('#code')
-                let rowss = document.querySelector('#rowss')
-                var $table = document.querySelector('#list-table')
+                let $table = document.querySelector('#list-table')
 
                 code.innerHTML = result.codeResult.code
 
                 product.forEach(function (aProduct) {
                     if (aProduct.eanCode === result.codeResult.code) {
+
                         console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
                         pname = document.querySelector('#pname')
                         pname.innerHTML = aProduct.pName
                         let row = document.createElement('tr')
+                        row.dataset.id = aProduct.eanCode
+                        row.innerHTML=`
+`
+
+
+
                         row.innerHTML = `
     <td>
       ${aProduct.pName}
-    </td>
+    </t>
     <td>
       ${aProduct.eanCode}
     </td>
     <td>
-      ${''}
+        <input >
     </td>
-    
+    <br>
+    <td class="actions">
+        <button data-action="update">update</button>
+      </td>
+   
   `
                         $table.appendChild(row)
-                        Quagga.stop();
+                        console.log($("#pname").text().length)
 
-
-
-
-
-                    } else {
-                        if ($("#pname").text().length > 7) {
+                    }
+                    if ($("#pname").text().length > 5) {
                             Quagga.stop();
                             console.log($("#pname").text())
                         }else{
-                            rowss.innerHTML =  `<button ng-click="" >new product</button>
+                        pname.innerHTML =  `<button ng-click="" >new </button>
 `
-                        }
-
                     }
                 })
 
+                pname.addEventListener('click', function (event) {
+                    console.log('test')
+                    $scope.showTheForm = true;
+                })
+
+                $table.addEventListener('click', function (event) {
+                    event.preventDefault()
+                    let updateButton = event.target
+                    let row = updateButton.closest('tr')
+                    let id = row.dataset.id
+                    let action = updateButton.dataset.action
+
+                    if (action === 'update'){
 
 
+
+                        let input = row.querySelectorAll('input')
+                        let face = input[0].value
+                        console.log(face)
+                        product.forEach(function (aProduct) {
+                            if (aProduct.eanCode === id){
+                                aProduct.pface =face
+                            }
+                        })
+                        localStorage.setItem('product', JSON.stringify(product))
+                        console.log(product)
+                        location.reload()
+
+                    }
+
+                })
 
             });
 
@@ -232,13 +253,23 @@ myApp.controller("secondController", ['$scope', '$modal', '$log',
             }
         }, false);
 
-
-
-
-    }]);
+}]);
 
 
 myApp.controller('productController', ['$scope', '$routeParams', 'cityService', function($scope, $routeParams, cityService) {
     $scope.city = cityService.city;
+
+}]);
+myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $routeParams) {
+    let toti = []
+
+    toti = product.filter(function (aproduct) {
+
+        return aproduct.category === "ToTi"
+
+    })
+
+
+    $scope.totis = toti
 
 }]);
