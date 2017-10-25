@@ -166,7 +166,6 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
                 product.forEach(function (aProduct) {
                     if (aProduct.eanCode === result.codeResult.code) {
-
                         console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
                         pname = document.querySelector('#pname')
                         pname.innerHTML = aProduct.pName
@@ -261,6 +260,8 @@ myApp.controller('productController', ['$scope', '$routeParams', 'cityService', 
 
 }]);
 myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $routeParams) {
+    let table = document.querySelector('#product-table')
+
     let toti = []
 
     toti = product.filter(function (aproduct) {
@@ -268,8 +269,37 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
         return aproduct.category === "ToTi"
 
     })
-
-
     $scope.totis = toti
+    console.log(toti)
+
+
+    toti.forEach(function (atoti) {
+        console.log("atoto" + atoti )
+        let row = document.createElement('tr')
+        row.dataset.id = atoti.eanCode
+        row.innerHTML = `
+    <td>
+      ${atoti.pName}
+    </t>
+    <td>
+      ${atoti.eanCode}
+    </td>
+    <td>
+        <input >
+    </td>
+    <br>
+    <td class="actions">
+        <button data-action="update">update</button>
+      </td>
+      `
+
+        table.appendChild(row)
+
+
+
+
+    })
+
+
 
 }]);
