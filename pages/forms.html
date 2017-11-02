@@ -37,13 +37,14 @@
 <div id = "rowss"> </div>
 <div id = "newDiv"> </div>
 
-<h5> Add a vew product here </h5>
 
 
+
+<h5> Add aa vew product here </h5>
 
 <button  ng-click="showTheForm = !showTheForm">New </button>
 
-<form ng-show="showTheForm" ng-submit="newProduct(item)">
+<form id="addForm" ng-show="showTheForm" ng-submit="newProduct(item)">
     <label>Name</label>
     <input ng-model="item.pName"  placeholder="name of the product">
     <label>EAN code</label>
