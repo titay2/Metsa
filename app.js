@@ -327,22 +327,45 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
 
 }])
 myApp.controller('realloController', ['$scope',  function($scope) {
+
+    // datas to be fatched from the JSON
     const bw = 1024;
     const bh = 600;
-    const mT = 44
-    const sca =35
-    const pl = 13
-    const m = 8
 
-    const wc = 60
-    const talo = 26
-    const nenä = 15
+
+    const nenaMt = 6
+    const nenasca =4
+    const nenaR = 3
+    const nenaOthers = 2
+
+
+    const taloMt = 10
+    const taloSca =7
+    const taloR = 5
+    const taloOthers = 4
+
+    const wcMt = 35
+    const wcSca =10
+    const wcR = 10
+    const wcOthers = 5
+
+
+    const nenä = nenaMt + nenasca+ nenaR+ nenaOthers
+    const talo = taloMt + taloSca+ taloR+ taloOthers
+    const wc = wcMt + wcSca+ wcR+ wcOthers
+
+// percentage of each product
 
     const nenaWidth = (nenä/(wc+talo+nenä))*100
     const taloWidth = (talo/(wc+talo+nenä))*100
     const wcWidth = (wc/(wc+talo+nenä))*100
 
+    const nenaPercent = parseFloat(Math.round(nenaWidth * 100) / 100).toFixed(2);
+    const taloPercent = parseFloat(Math.round(taloWidth * 100) / 100).toFixed(2);
+    const wcPercent = parseFloat(Math.round(wcWidth * 100) / 100).toFixed(2);
     console.log(nenaWidth)
+
+// percentage of products on the canvas width
 
     const partNena = bw*nenaWidth/100
     const partTalo = bw*taloWidth/100
@@ -353,22 +376,29 @@ myApp.controller('realloController', ['$scope',  function($scope) {
     console.log(partNena)
 
     const canvas = document.getElementById('myCanvas');
+    const canvas1 = document.getElementById('canvas');
     const context = canvas.getContext('2d');
+    const context1 = canvas1.getContext('2d');
     canvas.width  = bw + 1;
     canvas.height = bh + 1;
+    //
+    canvas1.width  = bw + 1;
+    canvas1.height = 30;
 
 
-    const moduleN = 5
+    const moduleN = 10
     const shelveN = 3
 
     function drawBoard(){
         for (let x = 0; x <= bw; x += bw/moduleN) {
+
             context.moveTo(0.5 + x , 0);
             context.lineTo(0.5 + x , bh);
         }
 
 
         for (let x = 0; x <= bh; x += bh/shelveN) {
+
             context.moveTo(0, 0.5 + x );
             context.lineTo(bw , 0.5 + x);
         }
@@ -378,8 +408,7 @@ myApp.controller('realloController', ['$scope',  function($scope) {
     }
     drawBoard();
 
-
-
+// get the coordinates of a click on the canvase
     canvas.addEventListener('click', function (event) {
 
         const rect = canvas.getBoundingClientRect();
@@ -389,16 +418,216 @@ myApp.controller('realloController', ['$scope',  function($scope) {
 
     })
 
+// draw the partition for Nenäliinat
+    context.beginPath()
     context.moveTo(partNena, 0);
     context.lineTo(partNena, bh);
-    //context.lineWidth = 15;
+    context.lineWidth = 10;
     context.stroke();
 
+    context1.beginPath()
+    context1.font = "15px Arial";
+    context1.fillText("Nenäliinat: " + nenaPercent + "%",0,20);
+    context1.moveTo(partNena, 0)
+    context1.lineTo(partNena, 30);
+    context1.lineWidth = 10;
+    context1.stroke();
 
-    context.fillStyle = "#FF0000";
-    context.fillRect(0, 0, 150, 100);
-    context.fillStyle = "#FFf000";
-    context.fillRect(150, 0, 150, 100);
+// draw the partition for talouspaperit
+    const taloPart = partNena + partTalo
+    context.beginPath()
+    context.moveTo( taloPart, 0);
+    context.lineTo(taloPart, bh);
+    context.lineWidth = 10;
+    context.stroke();
+
+    context1.beginPath()
+    context1.font = "15px Arial";
+    context1.fillText("Talouspaperit: " + taloPercent + "%",partNena + 10,20);
+    context1.moveTo(taloPart, 0)
+    context1.lineTo(taloPart, 30);
+    context1.lineWidth = 10;
+    context1.stroke();
+// draw the partition for WC_paperit
+    const wcPart = taloPart + partWc
+    context.beginPath()
+    context.moveTo( wcPart, 0);
+    context.lineTo(wcPart, bh);
+    context.lineWidth = 10;
+    context.stroke();
+
+    context1.beginPath()
+    context1.font = "15px Arial";
+    context1.fillText("WC_paperit: " + wcPercent + "%",taloPart + 10,20);
+    context1.moveTo(wcPart, 0)
+    context1.lineTo(wcPart, 30);
+    context1.lineWidth = 10;
+    context1.stroke();
+
+
+
+ // calculate the percentage of each producer for Nenäliinat
+
+    const nmt = (nenaMt/(nenä))*100
+    const nmtPercent = parseFloat(Math.round(nmt * 100) / 100).toFixed(2);
+    const nsca = (nenasca/(nenä))*100
+    const nscaPercent = parseFloat(Math.round(nsca * 100) / 100).toFixed(2);
+
+    const nroy = (nenaR/(nenä))*100
+    const nroyPercent = parseFloat(Math.round(nroy * 100) / 100).toFixed(2);
+
+    const nothers = (nenaOthers/(nenä))*100
+    const nothersPercent = parseFloat(Math.round(nothers * 100) / 100).toFixed(2);
+
+
+    const nMtHeight =( bh * nmt)/100
+    const nScaHeight =( bh * nsca)/100
+    const nRoyHeight =( bh * nroy)/100
+    const nOthersHeight =( bh * nothers)/100
+
+
+// Draw the reallo diagram colors for nenäliinat MT
+    context.font = "20px Arial";
+    context.fillText( nmtPercent + "%" ,0,nMtHeight);
+    context.fillStyle = "#13b4ff";
+    context.globalAlpha = 0.5;
+    context.fillRect(0,0,partNena,nMtHeight);
+
+// Draw the reallo diagram colors for  nenäliinat SCA
+    context.font = "20px Arial";
+    context.fillText( nscaPercent + "%" ,0,nScaHeight +nMtHeight);
+    context.fillStyle = "#ab3fdd";
+    context.globalAlpha = 0.5;
+    context.fillRect(0,nMtHeight,partNena,nScaHeight);
+
+
+// Draw the reallo diagram colors for nenäliinat Roy
+    context.font = "20px Arial";
+    context.fillText( nroyPercent + "%" ,0,nScaHeight + nMtHeight + nRoyHeight);
+    context.fillStyle = "#ae163e";
+    context.globalAlpha = 0.5;
+    context.fillRect(0,nScaHeight + nMtHeight ,partNena,nRoyHeight);
+
+
+// Draw the reallo diagram colors for nenäliinat Othres
+    context.font = "20px Arial";
+    context.fillText( nothersPercent + "%" ,0, bh);
+    context.fillStyle = "#ffff00";
+    context.globalAlpha = 0.5;
+    context.fillRect(0,nScaHeight + nMtHeight + nRoyHeight,partNena,nOthersHeight);
+
+
+// calculate the percentage of each producer for Talospaperit
+
+
+    const tmt = (taloMt/(talo))*100
+    const tmtPercent = parseFloat(Math.round(tmt * 100) / 100).toFixed(2);
+
+    const tsca = (taloSca/(talo))*100
+    const tscaPercent = parseFloat(Math.round(tsca * 100) / 100).toFixed(2);
+
+    const troy = (taloR/(talo))*100
+    const troyPercent = parseFloat(Math.round(troy * 100) / 100).toFixed(2);
+
+    const tothers = (taloOthers/(talo))*100
+    const tothersPercent = parseFloat(Math.round(tothers * 100) / 100).toFixed(2);
+
+
+    const tMtHeight =( bh * tmt)/100
+    const tScaHeight =( bh * tsca)/100
+    const tRoyHeight =( bh * troy)/100
+    const tOthersHeight =( bh * tothers)/100
+
+
+
+
+// Draw the reallo diagram colors for Talospaperit MT
+    context.font = "20px Arial";
+    context.fillText( tmtPercent + "%" ,partNena,tMtHeight);
+    context.fillStyle = "#13b4ff";
+    context.globalAlpha = 0.5;
+    context.fillRect(partNena,0,partTalo,tMtHeight);
+
+// Draw the reallo diagram colors for  Talospaperit SCA
+    context.font = "20px Arial";
+    context.fillText( tscaPercent + "%" ,partNena,tScaHeight +tMtHeight);
+    context.fillStyle = "#ab3fdd";
+    context.globalAlpha = 0.5;
+    context.fillRect(partNena,tMtHeight,partTalo,tScaHeight);
+
+
+// Draw the reallo diagram colors for Talospaperit Roy
+    context.font = "20px Arial";
+    context.fillText( troyPercent + "%" ,partNena,tScaHeight + tMtHeight + tRoyHeight);
+    context.fillStyle = "#ae163e";
+    context.globalAlpha = 0.5;
+    context.fillRect(partNena,tScaHeight + tMtHeight ,partTalo,tRoyHeight);
+
+
+// Draw the reallo diagram colors for Talospaperit Othres
+    context.font = "20px Arial";
+    context.fillText( tothersPercent + "%" ,partNena, bh);
+    context.fillStyle = "#ffff00";
+    context.globalAlpha = 0.5;
+    context.fillRect(partNena,tScaHeight + tMtHeight + tRoyHeight,partTalo,tOthersHeight);
+
+// calculate the percentage of each producer for Talospaperit
+
+
+
+
+    const wcmt = (wcMt/(wc))*100
+    const wcmtPercent = parseFloat(Math.round(wcmt * 100) / 100).toFixed(2);
+
+    const wcsca = (wcSca/(wc))*100
+    const wcscaPercent = parseFloat(Math.round(wcsca * 100) / 100).toFixed(2);
+
+    const wcroy = (wcR/(wc))*100
+    const wcroyPercent = parseFloat(Math.round(wcroy * 100) / 100).toFixed(2);
+
+    const wcothers = (wcOthers/(wc))*100
+    const wcothersPercent = parseFloat(Math.round(wcothers * 100) / 100).toFixed(2);
+
+
+    const wcMtHeight =( bh * wcmt)/100
+    const wcScaHeight =( bh * wcsca)/100
+    const wcRoyHeight =( bh * wcroy)/100
+    const wcOthersHeight =( bh * wcothers)/100
+
+
+const startPoint = partTalo + partNena
+
+// Draw the reallo diagram colors for Talospaperit MT
+    context.font = "20px Arial";
+    context.fillText( wcmtPercent + "%" ,startPoint ,wcMtHeight);
+    context.fillStyle = "#13b4ff";
+    context.globalAlpha = 0.5;
+    context.fillRect(startPoint ,0,wcPart,wcMtHeight);
+
+// Draw the reallo diagram colors for  Talospaperit SCA
+    context.font = "20px Arial";
+    context.fillText( wcscaPercent + "%" ,startPoint ,wcScaHeight +wcMtHeight);
+    context.fillStyle = "#ab3fdd";
+    context.globalAlpha = 0.5;
+    context.fillRect(startPoint,wcMtHeight,wcPart,wcScaHeight);
+
+
+// Draw the reallo diagram colors for Talospaperit Roy
+    context.font = "20px Arial";
+    context.fillText( wcroyPercent + "%" ,startPoint,wcScaHeight + wcMtHeight + wcRoyHeight);
+    context.fillStyle = "#ae163e";
+    context.globalAlpha = 0.5;
+    context.fillRect(startPoint,wcScaHeight + wcMtHeight ,wcPart,wcRoyHeight);
+
+
+// Draw the reallo diagram colors for Talospaperit Othres
+    context.font = "20px Arial";
+    context.fillText( wcothersPercent + "%" ,startPoint, bh);
+    context.fillStyle = "#ffff00";
+    context.globalAlpha = 0.5;
+    context.fillRect(startPoint,wcScaHeight + wcMtHeight + wcRoyHeight,wcPart,wcOthersHeight);
+
+
 
 }])
 

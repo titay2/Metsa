@@ -1,8 +1,71 @@
-    <style>
-        #myCanvas {
-            margin: 0px;
-            padding: 0px;
-        }
-    </style>
+<style>
+
+    #caption, #blue
+    {
+        display: inline-block;
+    }
+    #caption0, #purple
+    {
+        display: inline-block;
+    }
+    #caption1, #wine
+    {
+        display: inline-block;
+    }
+    #caption2, #yellow
+    {
+        display: inline-block;
+    }
+    .foo {
+        width: 25px;
+        height: 25px;
+        border: 1px solid rgba(0, 0, 0, .2);
+    }
+
+    .blue {
+        background: #13b4ff;
+    }
+
+    .purple {
+        background: #ab3fdd;
+    }
+
+    .wine {
+        background: #ae163e;
+    }
+    .yellow {
+        background: #ffff00;
+    }
+
+    .topcorner{
+        position:absolute;
+        top: 0;
+        right:0;
+    }
+</style>
+
+<div class="topcorner"><a href="">Back to Home</a></div>
+
+<h1>Producer realogramm</h1>
+
+<div id="caption"><h4> Metsä tissue :  </h4></div>
+<div  id ="blue" class="foo blue"></div>
+<br>
+<div id="caption0"><h4> SCA :  </h4></div>
+<div  id ="purple" class="foo purple"></div>
+<br>
+<div id="caption1"><h4> R.. OY  :</h4></div>
+<div  id ="wine" class="foo wine"></div>
+<br>
+<div id="caption2"><h4> others :</h4></div>
+<div  id ="yellow" class="foo yellow"></div>
+
+
+
+
+<br>
+<br>
+<br>
+<canvas id="canvas"></canvas>
 
 <canvas id="myCanvas"></canvas>
