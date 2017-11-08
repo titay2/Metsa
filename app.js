@@ -1,7 +1,7 @@
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
 const product = JSON.parse(localStorage.getItem('product') || '[]' )
-const form = document.querySelector('#addForm')
+let currentShop = []
 myApp.config(function ($routeProvider) {
 
     $routeProvider
@@ -66,7 +66,24 @@ myApp.controller('locationController', ['$scope', '$modal', '$log','cityService'
         $scope.showTheForm = false;
     }
     $scope.markets = market;
+
+    const container = document.querySelector('#container')
+
 }]);
+
+myApp.directive('locform', [function () {
+    return {
+        restrict: 'C',
+        link: function (scope, elem, attrs) {
+            elem.bind('click', function(event) {
+                console.log(scope.person)
+                scope.person.surname="hello"
+                console.log(scope.person)
+                scope.$apply();
+            });
+        }
+    };
+}])
 
 myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
     function ($scope, $modal, $log, $compile) {
@@ -333,8 +350,8 @@ myApp.controller('realloController', ['$scope',  function($scope) {
     const bh = 600;
 
 
-    const nenaMt = 6
-    const nenasca =4
+    const nenaMt = 16
+    const nenasca =64
     const nenaR = 3
     const nenaOthers = 2
 
@@ -387,7 +404,7 @@ myApp.controller('realloController', ['$scope',  function($scope) {
 
 
     const moduleN = 10
-    const shelveN = 3
+    const shelveN = 2
 
     function drawBoard(){
         for (let x = 0; x <= bw; x += bw/moduleN) {
@@ -448,6 +465,7 @@ myApp.controller('realloController', ['$scope',  function($scope) {
     context1.lineTo(taloPart, 30);
     context1.lineWidth = 10;
     context1.stroke();
+
 // draw the partition for WC_paperit
     const wcPart = taloPart + partWc
     context.beginPath()
