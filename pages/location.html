@@ -3,12 +3,16 @@
 <h1>
     Add a location
 </h1>
+<br>
+<br>
+<div id="local">
 
+</div>
 
-
-
-
-<button ng-click="showTheForm = !showTheForm">Add a Task</button>
+<button style="position: center " ng-click="showTheForm = !showTheForm">Add a new location </button>
+<br>
+<br>
+<br>
 
 <form ng-show="showTheForm" ng-submit="processForm(shops)">
     <input id="city" ng-model="shops.name" placeholder="name of the city">
@@ -20,14 +24,6 @@
 </form>
 
 
-
-
-<br>
-<br>
-<div id="local">
-
-
-</div>
 <div id="container" class="locform" ng-repeat="shops in markets">
 <a href="#/productlist">
     <div class="button_base b05_3d_roll" data-shelvdept="90">
@@ -36,7 +32,8 @@
 
     </div>
 </a>
-<button class="btn" ng-click="remove($index)">X</button>
+ <br>
+ <br>
 </div>
 
 <a href="#/productlist">
@@ -54,7 +51,12 @@
     </div>
 </a>
 <br>
+
+
+
 <br>
+
+
 
 <br>
 <br>

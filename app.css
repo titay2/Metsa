@@ -118,6 +118,12 @@ h1 {
     margin-bottom: 2rem;
 }
 
+
+
+#addLocation {
+   position:relative;
+}
+
 form {
     margin: 2rem 0;
 }

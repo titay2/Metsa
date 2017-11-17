@@ -1,50 +1,19 @@
-
 <!-- Div to show the scanner -->
 <div id="scanner-container"></div>
-<input type="button" id="btn" value="Start/Stop the scanner" />
+<!-- type="button" id="btn" value="Start/Stop the scanner" /-->
+
+<br>
+<br>
+    <div id="btn"  class="button_base b05_3d_roll" data-shelvdept="90">
+        <div>Startt/Stop scanner</div>
+        <div>Start/Stop scanner</div>
+    </div>
+
 
 <div id = "code"> </div>
 <div id = "pname"> </div>
 
-<br>
-<br>
-<br>
-<br>
-<h5> Update number of faces after scanning here </h5>
-<br>
-<br>
-<table id="list-table">
-    <thead>
-    <th>
-        Product name
-    </th>
-    <th>
-        EAN Code
-    </th>
-    <th colspan="2">
-        Faces
-    </th>
-    </thead>
-
-</table>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-
-<div id = "rowss"> </div>
-<div id = "newDiv"> </div>
-
-
-
-
-<h5> Add aa vew product here </h5>
-
-<button  ng-click="showTheForm = !showTheForm">New </button>
-
-<form id="addForm" ng-show="showTheForm" ng-submit="newProduct(item)">
+<form id="addForm"  ng-submit="newProduct(item)" style="display: none;">
     <label>Name</label>
     <input ng-model="item.pName"  placeholder="name of the product">
     <label>EAN code</label>
@@ -67,5 +36,74 @@
     <br>
 
     <button>Submit</button>
-    <button type="button" ng-click="showTheForm = false">Cancel</button>
+    <button type="button"  ng-click="cancleForm()">Cancel</button>
 </form>
+
+
+
+
+<br>
+<br>
+
+
+<table id="list-table">
+    <thead>
+    <th>
+        Producttt name
+    </th>
+    <th>
+        EAN Code
+    </th>
+    <th colspan="2">
+        Faces
+    </th>
+    </thead>
+
+</table>
+<br>
+<br>
+<br>
+
+
+<div id = "rowss"> </div>
+<div id = "newDiv"> </div>
+
+
+
+
+
+<a href="#/realloD">
+    <div class="button_base b05_3d_roll" data-shelvdept="90">
+        <div>Rello</div>
+        <div>Rello</div>
+    </div>
+</a>
+
+<button ng-click="updateForm = !updateForm" >New </button>
+
+<form ng-show="updateForm" ng-submit="newProduct(item)">
+    <label>Name</label>
+    <input ng-model="item.pName"  placeholder="name of the product">
+    <label>EAN code</label>
+    <input ng-model="item.eanCode"  placeholder="EAN code" >
+    <br>
+    <label>select a category</label><br>
+    <select ng-model="item.category" ng-options="c for c in categories"  ></select>
+    <br>
+    <br>
+    <label>select a Producer</label><br>
+    <select ng-model="item.producer" ng-options="p for p in producers"  ></select>
+    <br>
+    <br>
+    <label>Length</label><br>
+    <input ng-model="item.pLenght" placeholder="Length in cm" >
+    <label>Height</label><br>
+    <input ng-model="item.pHeight" placeholder="Height in cm" >
+    <label>Width</label><br>
+    <input ng_model="item.pWidth" placeholder="Width in cm" >
+    <br>
+
+    <button>Submit</button>
+    <button type="button">Cancel</button>
+</form>
+

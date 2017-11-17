@@ -1,7 +1,7 @@
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
 const product = JSON.parse(localStorage.getItem('product') || '[]' )
-let currentShop = []
+const currentShop = JSON.parse(localStorage.getItem('shop') || '[]' )
 myApp.config(function ($routeProvider) {
 
     $routeProvider
@@ -76,10 +76,9 @@ myApp.directive('locform', [function () {
         restrict: 'C',
         link: function (scope, elem, attrs) {
             elem.bind('click', function(event) {
-                console.log(scope.person)
-                scope.person.surname="hello"
-                console.log(scope.person)
-                scope.$apply();
+                console.log(scope.shops)
+                localStorage.setItem('currentShop', JSON.stringify(scope.shops))
+
             });
         }
     };
@@ -182,8 +181,10 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
             Quagga.onDetected(function (result) {
                 let code = document.querySelector('#code')
                 let $table = document.querySelector('#list-table')
+                const add_new_form = document.querySelector('#addForm');
+                console.log(add_new_form)
 
-                code.innerHTML = result.codeResult.code
+                //code.innerHTML = result.codeResult.code
 
                 product.forEach(function (aProduct) {
                     if (aProduct.eanCode === result.codeResult.code) {
@@ -219,20 +220,35 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
                         console.log($("#pname").text().length)
 
-                    }
-                    if ($("#pname").text().length > 5) {
-                            Quagga.stop();
-                            console.log($("#pname").text())
+                        Quagga.stop()
+
+
+
                         }else{
-                        pname.innerHTML =  `<button ng-click="" >new </button>
+
+                        pname.innerHTML =  `<button id="formButton" >new </button>
+
 `
+                        Quagga.stop()
+
                     }
                 })
 
-                pname.addEventListener('click', function (event) {
-                    console.log('test')
-                    $scope.showTheForm = true;
-                })
+                const add_new_button = pname.querySelector('#formButton');
+
+                add_new_button.addEventListener('click', function (event) {
+                 console.log('test')
+                    add_new_form.style.display = "block"
+                   // add_new_form.show();
+                 console.log($scope);
+                 })
+
+                $scope.cancleForm =   function () {
+                    add_new_form.style.display = "none"
+                    location.reload()
+
+                }
+
 
                 $table.addEventListener('click', function (event) {
                     event.preventDefault()
@@ -266,7 +282,9 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
         }
 
 
-        // Start/stop scanner
+
+
+     // Start/stop scanner
         document.getElementById("btn").addEventListener("click", function () {
             if (_scannerIsRunning) {
                 Quagga.stop();
@@ -344,6 +362,9 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
 
 }])
 myApp.controller('realloController', ['$scope',  function($scope) {
+
+    console.log(currentShop)
+    //let toti = _.where(product, {category: "ToTi"} || {category: "ToTi"});
 
     // datas to be fatched from the JSON
     const bw = 1024;
