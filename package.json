@@ -1,0 +1,19 @@
+{
+  "name": "metsa",
+  "version": "1.0.0",
+  "description": "Survey App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/titay2/Metsa.git"
+  },
+  "author": "tehetena",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/titay2/Metsa/issues"
+  },
+  "homepage": "https://github.com/titay2/Metsa#readme"
+}

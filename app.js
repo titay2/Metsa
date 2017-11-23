@@ -17,8 +17,12 @@ myApp.config(function ($routeProvider) {
     $routeProvider
 
         .when('/', {
-            templateUrl: 'login.html',
+            templateUrl: 'pages/login.html',
             controller: 'mainController'
+        })
+        .when('/location', {
+            templateUrl: 'pages/location.html',
+            controller: 'locationController'
         })
 
         .when('/second', {
@@ -33,10 +37,7 @@ myApp.config(function ($routeProvider) {
             templateUrl: 'pages/productList.html',
             controller: 'productController'
         })
-        .when('/location', {
-            templateUrl: 'pages/location.html',
-            controller: 'locationController'
-        })
+
         .when('/finish', {
             templateUrl: 'pages/finish.html',
             controller: 'finishController'
@@ -70,6 +71,10 @@ myApp.service('cityService', function() {
 });
 
 //CONTROLLERS
+
+myApp.controller('mainController', [function() {
+
+}]);
 
 myApp.controller('locationController', ['$scope', function($scope) {
 

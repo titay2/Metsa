@@ -112,29 +112,4 @@
 
 <!--button ng-click="updateForm = !updateForm" >New </button-->
 
-<form ng-show="updateForm" ng-submit="newProduct(item)">
-    <label>Name</label>
-    <input ng-model="item.pName"  placeholder="name of the product">
-    <label>EAN code</label>
-    <input ng-model="item.eanCode"  placeholder="EAN code" >
-    <br>
-    <label>select a category</label><br>
-    <select ng-model="item.category" ng-options="c for c in categories"  ></select>
-    <br>
-    <br>
-    <label>select a Producer</label><br>
-    <select ng-model="item.producer" ng-options="p for p in producers"  ></select>
-    <br>
-    <br>
-    <label>Length</label><br>
-    <input ng-model="item.pLenght" placeholder="Length in cm" >
-    <label>Height</label><br>
-    <input ng-model="item.pHeight" placeholder="Height in cm" >
-    <label>Width</label><br>
-    <input ng_model="item.pWidth" placeholder="Width in cm" >
-    <br>
-
-    <button>Submit</button>
-    <button type="button">Cancel</button>
-</form>
 
