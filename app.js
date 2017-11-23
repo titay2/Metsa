@@ -6,117 +6,6 @@ const items = JSON.parse(localStorage.getItem('items') || '[]' )
 
 
 
-var App = {
-    init: function() {
-        var self = this;
-
-        Quagga.init(this.state, function(err) {
-            if (err) {
-                return self.handleError(err);
-            }
-            //Quagga.registerResultCollector(resultCollector);
-            App.attachListeners();
-            App.checkCapabilities();
-            Quagga.start();
-        });
-    },
-    handleError: function(err) {
-        console.log(err);
-    },
-    checkCapabilities: function() {
-        var track = Quagga.CameraAccess.getActiveTrack();
-        var capabilities = {};
-        if (typeof track.getCapabilities === 'function') {
-            capabilities = track.getCapabilities();
-        }
-        this.applySettingsVisibility('zoom', capabilities.zoom);
-        this.applySettingsVisibility('torch', capabilities.torch);
-    },
-    updateOptionsForMediaRange: function(node, range) {
-        console.log('updateOptionsForMediaRange', node, range);
-        var NUM_STEPS = 6;
-        var stepSize = (range.max - range.min) / NUM_STEPS;
-        var option;
-        var value;
-        while (node.firstChild) {
-            node.removeChild(node.firstChild);
-        }
-        for (var i = 0; i <= NUM_STEPS; i++) {
-            value = range.min + (stepSize * i);
-            option = document.createElement('option');
-            option.value = value;
-            option.innerHTML = value;
-            node.appendChild(option);
-        }
-    },
-    applySettingsVisibility: function(setting, capability) {
-        // depending on type of capability
-        if (typeof capability === 'boolean') {
-            var node = document.querySelector('input[name="settings_' + setting + '"]');
-            if (node) {
-                node.parentNode.style.display = capability ? 'block' : 'none';
-            }
-            return;
-        }
-        if (window.MediaSettingsRange && capability instanceof window.MediaSettingsRange) {
-            var node = document.querySelector('select[name="settings_' + setting + '"]');
-            if (node) {
-                this.updateOptionsForMediaRange(node, capability);
-                node.parentNode.style.display = 'block';
-            }
-            return;
-        }
-    },
-
-    initCameraSelection: function(){
-        var streamLabel = Quagga.CameraAccess.getActiveStreamLabel();
-
-        return Quagga.CameraAccess.enumerateVideoDevices()
-            .then(function(devices) {
-                function pruneText(text) {
-                    return text.length > 30 ? text.substr(0, 30) : text;
-                }
-                var $deviceSelection = document.getElementById("deviceSelection");
-                while ($deviceSelection.firstChild) {
-                    $deviceSelection.removeChild($deviceSelection.firstChild);
-                }
-                devices.forEach(function(device) {
-                    var $option = document.createElement("option");
-                    $option.value = device.deviceId || device.id;
-                    $option.appendChild(document.createTextNode(pruneText(device.label || device.deviceId || device.id)));
-                    $option.selected = streamLabel === device.label;
-                    $deviceSelection.appendChild($option);
-                });
-            });
-    },
-    attachListeners: function() {
-        var self = this;
-
-        self.initCameraSelection();
-        $(".controls").on("click", "button.stop", function(e) {
-            e.preventDefault();
-            Quagga.stop();
-            self._printCollectedResults();
-        });
-
-        $(".controls .reader-config-group").on("change", "input, select", function(e) {
-            e.preventDefault();
-            var $target = $(e.target),
-                value = $target.attr("type") === "checkbox" ? $target.prop("checked") : $target.val(),
-                name = $target.attr("name"),
-                state = self._convertNameToState(name);
-
-            console.log("Value of "+ state + " changed to " + value);
-            self.setState(state, value);
-        });
-    }
-
-}
-
-
-
-
-
 myApp.config(function ($routeProvider) {
 
     $routeProvider
@@ -269,6 +158,8 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                         //Quagga.registerResultCollector(resultCollector);
                         App.attachListeners();
                         App.checkCapabilities();
+                        Quagga.start();
+
                     });
                 },
                 handleError: function(err) {
@@ -468,7 +359,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                     frequency: 10,
                     decoder: {
                         readers : [{
-                            format: "code_128_reader",
+                            format: "ean_reader",
                             config: {}
                         }]
                     },
@@ -479,11 +370,156 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
 
 
-
-
-
-
         App.init()
+
+        Quagga.onProcessed(function(result) {
+            var drawingCtx = Quagga.canvas.ctx.overlay,
+                drawingCanvas = Quagga.canvas.dom.overlay;
+
+            if (result) {
+                if (result.boxes) {
+                    drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                    result.boxes.filter(function (box) {
+                        return box !== result.box;
+                    }).forEach(function (box) {
+                        Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                    });
+                }
+
+                if (result.box) {
+                    Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "#00F", lineWidth: 2});
+                }
+
+                if (result.codeResult && result.codeResult.code) {
+                    Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
+                }
+            }
+        });
+
+        Quagga.onDetected(function(result) {
+            console.log(result.codeResult.code)
+
+
+            let code = document.querySelector('#code')
+            let $table = document.querySelector('#list-table')
+            const add_new_form = document.querySelector('#addForm');
+            console.log(add_new_form)
+
+
+            product.forEach(function (aProduct) {
+                if (aProduct.eanCode === result.codeResult.code) {
+
+
+                    console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
+                    pname = document.querySelector('#pname')
+                    pname.innerHTML = aProduct.pName
+                    let row = document.createElement('tr')
+                    row.dataset.id = aProduct.eanCode
+                    row.innerHTML=`
+`
+
+
+
+                    row.innerHTML = `
+    <td>
+      ${aProduct.pName}
+    </t>
+    <td>
+      ${aProduct.eanCode}
+    </td>
+    <td>
+        <input >
+    </td>
+    <br>
+    <td class="actions">
+        <button data-action="update">update</button>
+        <button data-action="empty">out of stock</button>
+      </td>
+   
+  `
+                    $table.appendChild(row)
+
+                    console.log($("#pname").text().length)
+
+                    Quagga.stop()
+
+
+
+
+
+                }else{
+
+                    pname.innerHTML =  `<button id="formButton" >new </button>
+
+`
+                    const add_new_button = pname.querySelector('#formButton');
+
+                    add_new_button.addEventListener('click', function (event) {
+                        console.log('test')
+                        add_new_form.style.display = "block"
+                        // add_new_form.show();
+                        console.log($scope);
+                    })
+
+                    $scope.cancleForm =   function () {
+                        add_new_form.style.display = "none"
+                        location.reload()
+
+                    }
+
+
+                }
+            })
+
+
+
+
+            $table.addEventListener('click', function (event) {
+                event.preventDefault()
+                let updateButton = event.target
+                let row = updateButton.closest('tr')
+                let id = row.dataset.id
+                let action = updateButton.dataset.action
+
+                if (action === 'update'){
+
+
+
+                    let input = row.querySelectorAll('input')
+                    let face = input[0].value
+                    console.log(face)
+                    product.forEach(function (aProduct) {
+                        if (aProduct.eanCode === id){
+                            aProduct.pface =face
+                        }
+                    })
+                    localStorage.setItem('product', JSON.stringify(product))
+                    console.log(product)
+                    location.reload()
+
+                }
+                if (action === "empty"){
+                    let input = row.querySelectorAll('input')
+
+                    console.log(input)
+
+                    product.forEach(function (aProduct) {
+                        if (aProduct.eanCode === id) {
+                            aProduct.pface = "out of stock"
+                        }
+                        localStorage.setItem('product' , JSON.stringify(product))
+                        console.log(product)
+                        location.reload()
+
+
+                    })
+                }
+
+            })
+
+
+        });
+
         let _scannerIsRunning = false;
 
         function startScanner() {
@@ -610,7 +646,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                         Quagga.stop()
 
                     }
-                })
+
 
                 const add_new_button = pname.querySelector('#formButton');
 
@@ -652,6 +688,8 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                         location.reload()
 
                     }
+
+                })
 
                 })
 
