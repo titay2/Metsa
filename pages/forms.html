@@ -1,4 +1,36 @@
 <!-- Div to show the scanner -->
+<section id="container" class="container">
+
+    <div class="controls">
+        <fieldset class="input-group">
+            <button class="stop">Stop</button>
+        </fieldset>
+        <fieldset class="reader-config-group">
+
+
+                <span>Camera</span>
+                <select name="input-stream_constraints" id="deviceSelection">
+                </select>
+            </label>
+            <label style="display: none">
+                <span>Zoom</span>
+                <select name="settings_zoom"></select>
+            </label>
+            <label style="display: none">
+                <span>Torch</span>
+                <input type="checkbox" name="settings_torch" />
+            </label>
+        </fieldset>
+    </div>
+    <div id="result_strip">
+        <ul class="thumbnails"></ul>
+        <ul class="collector"></ul>
+    </div>
+    <div id="interactive" class="viewport"></div>
+</section>
+
+
+
 <div id="scanner-container"></div>
 <!-- type="button" id="btn" value="Start/Stop the scanner" /-->
 
