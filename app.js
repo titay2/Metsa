@@ -1,7 +1,8 @@
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
 const product = JSON.parse(localStorage.getItem('product') || '[]' )
-const currentShop = JSON.parse(localStorage.getItem('shop') || '[]' )
+const currentShop = JSON.parse(localStorage.getItem('currentShop') || '[]' )
+const items = JSON.parse(localStorage.getItem('items') || '[]' )
 myApp.config(function ($routeProvider) {
 
     $routeProvider
@@ -27,10 +28,28 @@ myApp.config(function ($routeProvider) {
             templateUrl: 'pages/location.html',
             controller: 'locationController'
         })
+        .when('/finish', {
+            templateUrl: 'pages/finish.html',
+            controller: 'finishController'
+        })
         .when('/realloD', {
         templateUrl: 'pages/reallo.html',
         controller: 'realloController'
-    })
+        })
+        .when('/piechart', {
+        templateUrl: 'pages/piechart.html',
+        controller: 'pieController'
+        })
+        .when('/empty', {
+        templateUrl: 'pages/empty.html',
+        controller: 'emptyController'
+        })
+        .when('/area', {
+        templateUrl: 'pages/area.html',
+        controller: 'areaController'
+        })
+
+
 });
 
 //SERVICES
@@ -43,12 +62,7 @@ myApp.service('cityService', function() {
 
 //CONTROLLERS
 
-myApp.controller('locationController', ['$scope', '$modal', '$log','cityService', function($scope,$log,$modal,cityService) {
-    $scope.loc = cityService.loc;
-
-    $scope.$watch('loc', function() {
-        cityService.loc = $scope.loc;
-    });
+myApp.controller('locationController', ['$scope', function($scope) {
 
     $scope.processForm = function(shops) {
         console.log(shops.name)
@@ -87,7 +101,7 @@ myApp.directive('locform', [function () {
 myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
     function ($scope, $modal, $log, $compile) {
         $scope.categories = ["ToTi", "HoTo", "Hanks"]
-        $scope.producers = ["MT", "SCA", "Horizon tissue" ]
+        $scope.producers = ["MT", "SCA", "R.OY", "Others" ]
         $scope.newProduct = function (item) {
             product.push ({
                 pName: item.pName,
@@ -97,7 +111,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                 pLenght : item.pLenght,
                 pHeight : item.pHeight,
                 pWidth : item.pWidth,
-                pface : 0
+                pface : ""
             })
 
             localStorage.setItem('product', JSON.stringify(product))
@@ -300,12 +314,9 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $routeParams) {
     let table = document.querySelector('#product-table')
 
-    let toti = _.where(product, {category: "ToTi"});
+    let toti = _.where(product);
     $scope.totis = toti
     console.log(toti)
-
-
-
 
     toti.forEach(function (atoti) {
         console.log("atoto" + atoti )
@@ -319,11 +330,12 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
       ${atoti.eanCode}
     </td>
     <td>
-        <input >
+        <input placeholder={{empty}}>
     </td>
     <br>
     <td class="actions">
         <button data-action="update">update</button>
+        <button data-action="empty">out of stock</button>
       </td>
       `
 
@@ -344,16 +356,27 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
 
             product.forEach(function (aProduct) {
                 if (aProduct.eanCode === id){
-                    aProduct.pface =face
-
+                    aProduct.pface = face
                 }
             })
 
             localStorage.setItem('product', JSON.stringify(product))
             console.log(product)
+        }
+        if (action === "empty"){
+            let input = row.querySelectorAll('input')
 
+                console.log(input)
 
+            product.forEach(function (aProduct) {
+                if (aProduct.eanCode === id) {
+                    aProduct.pface = "out of stock"
+                }
+                localStorage.setItem('product' , JSON.stringify(product))
+                row.remove()
+                console.log(product)
 
+            })
         }
 
     })
@@ -670,7 +693,153 @@ const startPoint = partTalo + partNena
 
 }])
 
+
+
+myApp.controller('pieController', ['$scope', '$routeParams', 'cityService', function($scope, $routeParams) {
+
+    const myCanvas = document.getElementById("myCanvass");
+    const myLegend = document.getElementById("myLegend");
+    myCanvas.width = 300;
+    myCanvas.height = 300;
+    let myData = {
+
+        //"SCA": (_.where(product, {producer: "SCA"} )).length,
+        //"MT": _.where(product, {producer: "MT"} ),
+        //"R. OY": _.where(product, {producer: "R.OY"} ),
+        //"Others": _.where(product, {producer: "Others"} ),
+
+        "MT": 325,
+        "R. OY": 425,
+        "SCA": 255,
+        "Others": 125
+    };
+
+
+
+    function drawPieSlice(ctx,centerX, centerY, radius, startAngle, endAngle, color ){
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.moveTo(centerX,centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    const Piechart = function(options){
+        this.options = options;
+        this.canvas = options.canvas;
+        this.ctx = this.canvas.getContext("2d");
+        this.colors = options.colors;
+
+        this.draw = function(){
+            let total_value = 0;
+            let color_index = 0;
+            for (let categ in this.options.data){
+                let val = this.options.data[categ];
+                total_value += val;
+            }
+
+
+            let start_angle = 0;
+            for (categ in this.options.data){
+                let val = this.options.data[categ];
+                let slice_angle = 2 * Math.PI * val / total_value;
+
+                var pieRadius = Math.min(this.canvas.width/2,this.canvas.height/2);
+                var labelX = this.canvas.width/2 + (pieRadius / 2) * Math.cos(start_angle + slice_angle/2);
+                var labelY = this.canvas.height/2 + (pieRadius / 2) * Math.sin(start_angle + slice_angle/2);
+
+
+
+                var labelText = Math.round(100 * val / total_value);
+                this.ctx.fillStyle = "black";
+                this.ctx.font = "bold 20px Arial";
+                this.ctx.fillText(labelText+"%", labelX,labelY);
+
+                drawPieSlice(
+                    this.ctx,
+                    this.canvas.width/2,
+                    this.canvas.height/2,
+                    Math.min(this.canvas.width/2,this.canvas.height/2),
+                    start_angle,
+                    start_angle+slice_angle,
+                    this.colors[color_index%this.colors.length]
+                );
+                start_angle += slice_angle
+                color_index++;
+
+
+
+            }
+
+
+            if (this.options.legend){
+                color_index = 0;
+                total_value = 0;
+                let legendHTML = "";
+                for (categ in this.options.data){
+                    let val = this.options.data[categ];
+                    total_value += val;
+                    console.log(total_value)
+
+                    legendHTML += "<div><span style='display:inline-block;width:20px;background-color:"+this.colors[color_index++]+";'>&nbsp;</span> "+ categ + "</div>";
+
+
+                }
+
+
+                this.options.legend.innerHTML = legendHTML;
+            }
+        }
+    }
+
+    var myPiechart = new Piechart(
+        {
+            canvas:myCanvas,
+            data:myData,
+            colors:["#13b4ff","#ae163e", "#ab3fdd","#ffff00"],
+            legend:myLegend
+
+        }
+    );
+    myPiechart.draw();
+
+}]);
+
+
+
+
+myApp.controller('emptyController', [ function() {
+     const table = document.getElementById("out_of_stoke")
+     const out_of_stock = _.where(product, {pface: "out of stock"} )
+
+    out_of_stock.forEach(function (empty) {
+        console.log("empty" + empty )
+        let row = document.createElement('tr')
+        row.dataset.id = empty.eanCode
+        row.innerHTML = `
+    <td>
+      ${empty.pName}
+    </t>
+    <td>
+      ${empty.eanCode}
+    </td>
+    
+      `
+
+        table.appendChild(row)
+    })
+
+
+
+
+
+}]);
 myApp.controller('productController', ['$scope', '$routeParams', 'cityService', function($scope, $routeParams, cityService) {
     $scope.city = cityService.city;
+
+}]);
+myApp.controller('areaController', [ function() {
+   let items =  _.where(product, {producer: "SCA"} )
 
 }]);
