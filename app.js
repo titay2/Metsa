@@ -1,6 +1,12 @@
+var feed = {pName: "metsa tissue", eanCode: 33358};
+
+const product = JSON.parse(localStorage.getItem('product') || '[]' )
+product.push(feed)
+
+
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
-const product = JSON.parse(localStorage.getItem('product') || '[]' )
+
 const currentShop = JSON.parse(localStorage.getItem('currentShop') || '[]' )
 const items = JSON.parse(localStorage.getItem('items') || '[]' )
 
@@ -451,7 +457,10 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
                     pname.innerHTML =  `<button id="formButton" >new </button>
 
+
 `
+                    Quagga.stop()
+
                     const add_new_button = pname.querySelector('#formButton');
 
                     add_new_button.addEventListener('click', function (event) {
