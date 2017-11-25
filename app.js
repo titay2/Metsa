@@ -1,11 +1,13 @@
-var feed = {pName: "metsa tissue", eanCode: 33358};
-
-const product = JSON.parse(localStorage.getItem('product') || '[]' )
-product.push(feed)
-
 
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
+
+
+
+const product = JSON.parse(localStorage.getItem('product') || '[]' )
+console.log(product)
+
+
 
 const currentShop = JSON.parse(localStorage.getItem('currentShop') || '[]' )
 const items = JSON.parse(localStorage.getItem('items') || '[]' )
@@ -383,6 +385,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
         App.init()
 
+
         Quagga.onProcessed(function(result) {
             var drawingCtx = Quagga.canvas.ctx.overlay,
                 drawingCanvas = Quagga.canvas.dom.overlay;
@@ -409,11 +412,18 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
         Quagga.onDetected(function(result) {
             console.log(result.codeResult.code)
+            let $table = document.querySelector('#list-table')
 
 
             let code = document.querySelector('#code')
-            let $table = document.querySelector('#list-table')
             const add_new_form = document.querySelector('#addForm');
+            if (product ==[]){
+
+                product.push({pName: "metsa tissue", eanCode: 11423361})
+
+                console.log(product)
+
+            }
             console.log(add_new_form)
 
 
@@ -455,6 +465,51 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                     Quagga.stop()
 
 
+                    $table.addEventListener('click', function (event) {
+                        event.preventDefault()
+                        let updateButton = event.target
+                        let row = updateButton.closest('tr')
+                        let id = row.dataset.id
+                        let action = updateButton.dataset.action
+
+                        if (action === 'update'){
+
+
+
+                            let input = row.querySelectorAll('input')
+                            let face = input[0].value
+                            console.log(face)
+                            product.forEach(function (aProduct) {
+                                if (aProduct.eanCode === id){
+                                    aProduct.pface =face
+                                }
+                            })
+                            localStorage.setItem('product', JSON.stringify(product))
+                            console.log(product)
+                            location.reload()
+
+                        }
+                        if (action === "empty"){
+                            let input = row.querySelectorAll('input')
+
+                            console.log(input)
+
+                            product.forEach(function (aProduct) {
+                                if (aProduct.eanCode === id) {
+                                    aProduct.pface = "out of stock"
+                                }
+                                localStorage.setItem('product' , JSON.stringify(product))
+                                console.log(product)
+                                location.reload()
+
+
+                            })
+                        }
+
+                    })
+
+
+
 
 
 
@@ -488,241 +543,13 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
 
 
-            $table.addEventListener('click', function (event) {
-                event.preventDefault()
-                let updateButton = event.target
-                let row = updateButton.closest('tr')
-                let id = row.dataset.id
-                let action = updateButton.dataset.action
-
-                if (action === 'update'){
-
-
-
-                    let input = row.querySelectorAll('input')
-                    let face = input[0].value
-                    console.log(face)
-                    product.forEach(function (aProduct) {
-                        if (aProduct.eanCode === id){
-                            aProduct.pface =face
-                        }
-                    })
-                    localStorage.setItem('product', JSON.stringify(product))
-                    console.log(product)
-                    location.reload()
-
-                }
-                if (action === "empty"){
-                    let input = row.querySelectorAll('input')
-
-                    console.log(input)
-
-                    product.forEach(function (aProduct) {
-                        if (aProduct.eanCode === id) {
-                            aProduct.pface = "out of stock"
-                        }
-                        localStorage.setItem('product' , JSON.stringify(product))
-                        console.log(product)
-                        location.reload()
-
-
-                    })
-                }
-
-            })
-
 
         });
-
-        let _scannerIsRunning = false;
-
-        function startScanner() {
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner-container'),
-                    constraints: {
-                        width: 480,
-                        height: 320,
-                        facingMode: "environment"
-                    },
-                },
-                decoder: {
-                    readers: [
-                        "ean_reader"
-
-                    ],
-                    debug: {
-                        showCanvas: true,
-                        showPatches: true,
-                        showFoundPatches: true,
-                        showSkeleton: true,
-                        showLabels: true,
-                        showPatchLabels: true,
-                        showRemainingPatchLabels: true,
-                        boxFromPatches: {
-                            showTransformed: true,
-                            showTransformedBox: true,
-                            showBB: true
-                        }
-                    }
-                },
-
-            }, function (err) {
-                if (err) {
-                    console.log(err);
-                    return
-                }
-
-                console.log("Initialization finished. Ready to start");
-                Quagga.start();
-
-                // Set flag to is running
-                _scannerIsRunning = true;
-            });
-            Quagga.onProcessed(function (result) {
-                let drawingCtx = Quagga.canvas.ctx.overlay,
-                    drawingCanvas = Quagga.canvas.dom.overlay;
-
-                if (result) {
-                    if (result.boxes) {
-                        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
-                        result.boxes.filter(function (box) {
-                            return box !== result.box;
-                        }).forEach(function (box) {
-                            Quagga.ImageDebug.drawPath(box, { x: 0, y: 1 }, drawingCtx, { color: "green", lineWidth: 2 });
-                        });
-                    }
-
-                    if (result.box) {
-                        Quagga.ImageDebug.drawPath(result.box, { x: 0, y: 1 }, drawingCtx, { color: "#00F", lineWidth: 2 });
-                    }
-
-                    if (result.codeResult && result.codeResult.code) {
-                        Quagga.ImageDebug.drawPath(result.line, { x: 'x', y: 'y' }, drawingCtx, { color: 'red', lineWidth: 3 });
-                    }
-                }
-            });
-
-
-            Quagga.onDetected(function (result) {
-                let code = document.querySelector('#code')
-                let $table = document.querySelector('#list-table')
-                const add_new_form = document.querySelector('#addForm');
-                console.log(add_new_form)
-
-                //code.innerHTML = result.codeResult.code
-
-                product.forEach(function (aProduct) {
-                    if (aProduct.eanCode === result.codeResult.code) {
-                        Quagga.stop();
-
-                        console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
-                        pname = document.querySelector('#pname')
-                        pname.innerHTML = aProduct.pName
-                        let row = document.createElement('tr')
-                        row.dataset.id = aProduct.eanCode
-                        row.innerHTML=`
-`
-
-
-
-                        row.innerHTML = `
-    <td>
-      ${aProduct.pName}
-    </t>
-    <td>
-      ${aProduct.eanCode}
-    </td>
-    <td>
-        <input >
-    </td>
-    <br>
-    <td class="actions">
-        <button data-action="update">update</button>
-      </td>
-   
-  `
-                        $table.appendChild(row)
-
-                        console.log($("#pname").text().length)
-
-                        Quagga.stop()
-
-
-
-                        }else{
-
-                        pname.innerHTML =  `<button id="formButton" >new </button>
-
-`
-                        Quagga.stop()
-
-                    }
-
-
-                const add_new_button = pname.querySelector('#formButton');
-
-                add_new_button.addEventListener('click', function (event) {
-                 console.log('test')
-                    add_new_form.style.display = "block"
-                   // add_new_form.show();
-                 console.log($scope);
-                 })
-
-                $scope.cancleForm =   function () {
-                    add_new_form.style.display = "none"
-                    location.reload()
-
-                }
-
-
-                $table.addEventListener('click', function (event) {
-                    event.preventDefault()
-                    let updateButton = event.target
-                    let row = updateButton.closest('tr')
-                    let id = row.dataset.id
-                    let action = updateButton.dataset.action
-
-                    if (action === 'update'){
-
-
-
-                        let input = row.querySelectorAll('input')
-                        let face = input[0].value
-                        console.log(face)
-                        product.forEach(function (aProduct) {
-                            if (aProduct.eanCode === id){
-                                aProduct.pface =face
-                            }
-                        })
-                        localStorage.setItem('product', JSON.stringify(product))
-                        console.log(product)
-                        location.reload()
-
-                    }
-
-                })
-
-                })
-
-            });
-
-        }
 
 
 
 
      // Start/stop scanner
-        document.getElementById("btn").addEventListener("click", function () {
-            if (_scannerIsRunning) {
-                Quagga.stop();
-
-            } else {
-                startScanner();
-            }
-        }, false);
 
 }]);
 
