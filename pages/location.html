@@ -15,8 +15,11 @@
 <br>
 
 <form ng-show="showTheForm" ng-submit="processForm(shops)">
-    <input id="city" ng-model="shops.name" placeholder="name of the city">
-    <input id="depth" placeholder="depth in cm" ng-model="shops.depth">
+    <input id="name" ng-model="shops.name" placeholder="name of market">
+    <input id="city" ng-model="shops.city" placeholder="name of the city">
+    <input id="address" ng-model="shops.address" placeholder="address">
+    <input id="phone" ng-model="shops.phone" placeholder="phone number">
+    <input id="contactP" ng-model="shops.contactP" placeholder="Contact person name">
     <br>
 
     <button>Submit</button>

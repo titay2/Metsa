@@ -6,7 +6,14 @@ const market = JSON.parse(localStorage.getItem('market') || '[]' )
 
 const product = JSON.parse(localStorage.getItem('product') || '[]' )
 console.log(product)
+if (product.length == 0){
 
+    product.push({pName: "metsa tissue", eanCode: 11423361})
+    localStorage.setItem('product', JSON.stringify(product))
+
+    console.log(product)
+
+}
 
 
 const currentShop = JSON.parse(localStorage.getItem('currentShop') || '[]' )
@@ -121,7 +128,8 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
         $scope.newProduct = function (item) {
             product.push ({
                 pName: item.pName,
-                eanCode : item.eanCode,
+                eanCode : $scope.coode,
+                note : item.note,
                 category : item. category,
                 producer : item.producer,
                 pLenght : item.pLenght,
@@ -131,6 +139,8 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
             })
 
             localStorage.setItem('product', JSON.stringify(product))
+
+            location.reload()
             console.log(product)
             $scope.showTheForm = false;
         }
@@ -412,23 +422,20 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
         Quagga.onDetected(function(result) {
             console.log(result.codeResult.code)
+
             let $table = document.querySelector('#list-table')
 
 
             let code = document.querySelector('#code')
             const add_new_form = document.querySelector('#addForm');
-            if (product ==[]){
 
-                product.push({pName: "metsa tissue", eanCode: 11423361})
-
-                console.log(product)
-
-            }
             console.log(add_new_form)
 
 
             product.forEach(function (aProduct) {
                 if (aProduct.eanCode === result.codeResult.code) {
+                    Quagga.stop()
+
 
 
                     console.log(aProduct.eanCode + '  and  '+ result.codeResult.code)
@@ -462,7 +469,6 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
                     console.log($("#pname").text().length)
 
-                    Quagga.stop()
 
 
                     $table.addEventListener('click', function (event) {
@@ -513,13 +519,17 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
 
 
-                }else{
+                }
+
+                else{
 
                     pname.innerHTML =  `<button id="formButton" >new </button>
 
 
 `
                     Quagga.stop()
+
+                    $scope.coode = result.codeResult.code
 
                     const add_new_button = pname.querySelector('#formButton');
 
@@ -573,7 +583,7 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
       ${atoti.eanCode}
     </td>
     <td>
-        <input placeholder={{empty}}>
+        <input >
     </td>
     <br>
     <td class="actions">

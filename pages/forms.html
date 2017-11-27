@@ -46,8 +46,8 @@
 <form id="addForm"  ng-submit="newProduct(item)" style="display: none;">
     <label>Name</label>
     <input ng-model="item.pName"  placeholder="name of the product">
-    <label>EAN code</label>
-    <input ng-model="item.eanCode"  placeholder="EAN code" >
+    <label>Note for the Admin</label>
+    <textarea ng-model="item.note"  placeholder="leave a note here "  ></textarea>
     <br>
     <label>select a category</label><br>
     <select ng-model="item.category" ng-options="c for c in categories"  ></select>
