@@ -140,7 +140,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
             localStorage.setItem('product', JSON.stringify(product))
 
-            location.reload()
+            //location.reload()
             console.log(product)
             $scope.showTheForm = false;
         }
@@ -492,7 +492,10 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                             })
                             localStorage.setItem('product', JSON.stringify(product))
                             console.log(product)
-                            location.reload()
+                            //location.reload()
+
+                            Quagga.start()
+
 
                         }
                         if (action === "empty"){
@@ -640,28 +643,28 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
 myApp.controller('realloController', ['$scope',  function($scope) {
 
     console.log(currentShop)
-    //let toti = _.where(product, {category: "ToTi"} || {category: "ToTi"});
+    //let toti = _.where(product, {category: "ToTi"} );
 
     // datas to be fatched from the JSON
     const bw = 1024;
     const bh = 600;
 
 
-    const nenaMt = 16
-    const nenasca =64
+    const nenaMt = 14
+    const nenasca = 8
     const nenaR = 3
-    const nenaOthers = 2
+    const nenaOthers = 3.5
 
 
-    const taloMt = 10
-    const taloSca =7
-    const taloR = 5
-    const taloOthers = 4
+    const taloMt = 46
+    const taloSca = 41
+    const taloR = 19
+    const taloOthers = 0
 
-    const wcMt = 35
-    const wcSca =10
-    const wcR = 10
-    const wcOthers = 5
+    const wcMt = 34
+    const wcSca = 40
+    const wcR = 26
+    const wcOthers = 0
 
 
     const nenä = nenaMt + nenasca+ nenaR+ nenaOthers
@@ -804,7 +807,7 @@ myApp.controller('realloController', ['$scope',  function($scope) {
 // Draw the reallo diagram colors for nenäliinat MT
     context.font = "20px Arial";
     context.fillText( nmtPercent + "%" ,0,nMtHeight);
-    context.fillStyle = "#13b4ff";
+    context.fillStyle = "#00ff00";
     context.globalAlpha = 0.5;
     context.fillRect(0,0,partNena,nMtHeight);
 
@@ -859,7 +862,7 @@ myApp.controller('realloController', ['$scope',  function($scope) {
 // Draw the reallo diagram colors for Talospaperit MT
     context.font = "20px Arial";
     context.fillText( tmtPercent + "%" ,partNena,tMtHeight);
-    context.fillStyle = "#13b4ff";
+    context.fillStyle = "#00ff00";
     context.globalAlpha = 0.5;
     context.fillRect(partNena,0,partTalo,tMtHeight);
 
@@ -880,11 +883,11 @@ myApp.controller('realloController', ['$scope',  function($scope) {
 
 
 // Draw the reallo diagram colors for Talospaperit Othres
-    context.font = "20px Arial";
-    context.fillText( tothersPercent + "%" ,partNena, bh);
-    context.fillStyle = "#ffff00";
-    context.globalAlpha = 0.5;
-    context.fillRect(partNena,tScaHeight + tMtHeight + tRoyHeight,partTalo,tOthersHeight);
+    //context.font = "20px Arial";
+    //context.fillText( tothersPercent + "%" ,partNena, bh);
+    //context.fillStyle = "#ffff00";
+    //context.globalAlpha = 0.5;
+    //context.fillRect(partNena,tScaHeight + tMtHeight + tRoyHeight,partTalo,tOthersHeight);
 
 // calculate the percentage of each producer for Talospaperit
 
@@ -915,7 +918,7 @@ const startPoint = partTalo + partNena
 // Draw the reallo diagram colors for Talospaperit MT
     context.font = "20px Arial";
     context.fillText( wcmtPercent + "%" ,startPoint ,wcMtHeight);
-    context.fillStyle = "#13b4ff";
+    context.fillStyle = "#00ff00";
     context.globalAlpha = 0.5;
     context.fillRect(startPoint ,0,wcPart,wcMtHeight);
 
@@ -936,11 +939,11 @@ const startPoint = partTalo + partNena
 
 
 // Draw the reallo diagram colors for Talospaperit Othres
-    context.font = "20px Arial";
-    context.fillText( wcothersPercent + "%" ,startPoint, bh);
-    context.fillStyle = "#ffff00";
-    context.globalAlpha = 0.5;
-    context.fillRect(startPoint,wcScaHeight + wcMtHeight + wcRoyHeight,wcPart,wcOthersHeight);
+   // context.font = "20px Arial";
+    //context.fillText( wcothersPercent + "%" ,startPoint, bh);
+    //context.fillStyle = "#ffff00";
+    //context.globalAlpha = 0.5;
+    //context.fillRect(startPoint,wcScaHeight + wcMtHeight + wcRoyHeight,wcPart,wcOthersHeight);
 
 
 
