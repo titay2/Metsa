@@ -140,7 +140,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
 
             localStorage.setItem('product', JSON.stringify(product))
 
-            //location.reload()
+            location.reload()
             console.log(product)
             $scope.showTheForm = false;
         }
