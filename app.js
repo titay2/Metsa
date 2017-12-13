@@ -1,23 +1,27 @@
 
 const myApp = angular.module('myApp', ['ngRoute', 'ui.bootstrap'])
 const market = JSON.parse(localStorage.getItem('market') || '[]' )
-
-
-
+const module = JSON.parse(localStorage.getItem('module') || '[]' )
 const product = JSON.parse(localStorage.getItem('product') || '[]' )
+const totalAreaP = JSON.parse(localStorage.getItem('totalAreaP') || '[]' )
 console.log(product)
+
+// making sure the product list is not empty and add some product if it is
 if (product.length == 0){
-
-    product.push({pName: "metsa tissue", eanCode: 11423361})
+    product.push({pName: "metsa tissue", eanCode: 11423361,  pLenght : 1, pHeight: 1,  pface : 1, pWidth:1 })
     localStorage.setItem('product', JSON.stringify(product))
-
     console.log(product)
-
 }
 
-
 const currentShop = JSON.parse(localStorage.getItem('currentShop') || '[]' )
-const items = JSON.parse(localStorage.getItem('items') || '[]' )
+
+Array.prototype.sum = function (prop) {
+    let total = 0
+    for ( let i = 0, _len = this.length; i < _len; i++ ) {
+        total += this[i][prop]
+    }
+    return total
+}
 
 
 
@@ -87,6 +91,8 @@ myApp.controller('mainController', [function() {
 
 myApp.controller('locationController', ['$scope', function($scope) {
 
+// Adding a new shop and location
+
     $scope.processForm = function(shops) {
         console.log(shops.name)
         market.push({
@@ -103,8 +109,6 @@ myApp.controller('locationController', ['$scope', function($scope) {
         $scope.showTheForm = false;
     }
     $scope.markets = market;
-
-    const container = document.querySelector('#container')
 
 }]);
 
@@ -135,20 +139,32 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                 pLenght : item.pLenght,
                 pHeight : item.pHeight,
                 pWidth : item.pWidth,
-                pface : ""
+                pface : item.pface
             })
 
             localStorage.setItem('product', JSON.stringify(product))
+
 
             location.reload()
             console.log(product)
             $scope.showTheForm = false;
         }
+
+        product.forEach(function (eachp) {
+            eachp.productArea = eachp.pHeight * eachp.pWidth * eachp.pface
+
+            localStorage.setItem('product', JSON.stringify(product))
+
+
+        })
         $scope.products = product;
 
 
 
-            var resultCollector = Quagga.ResultCollector.create({
+
+
+
+        var resultCollector = Quagga.ResultCollector.create({
                 capture: true,
                 capacity: 20,
                 blacklist: [{
@@ -492,7 +508,7 @@ myApp.controller("secondController", ['$scope', '$modal', '$log','$compile',
                             })
                             localStorage.setItem('product', JSON.stringify(product))
                             console.log(product)
-                            //location.reload()
+                            location.reload()
 
                             Quagga.start()
 
@@ -643,28 +659,28 @@ myApp.controller('dataController', ['$scope', '$routeParams', function($scope, $
 myApp.controller('realloController', ['$scope',  function($scope) {
 
     console.log(currentShop)
-    //let toti = _.where(product, {category: "ToTi"} );
+
 
     // datas to be fatched from the JSON
     const bw = 1024;
     const bh = 600;
 
 
-    const nenaMt = 14
-    const nenasca = 8
-    const nenaR = 3
-    const nenaOthers = 3.5
+    const nenaMt = (_.where(product, {category: "Hanks"} && {producer: "MT"} )).length
+    const nenasca = (_.where(product, {category: "Hanks"} && {producer: "SCA"} )).length
+    const nenaR = (_.where(product, {category: "Hanks"} && {producer: "R.OY"} )).length
+    const nenaOthers = ( _.where(product, {category: "Hanks"} && {producer: "Others"} )).length
 
 
-    const taloMt = 46
-    const taloSca = 41
-    const taloR = 19
-    const taloOthers = 0
+    const taloMt = (_.where(product, {category: "HoTo"} && {producer: "MT"} )).length
+    const taloSca = (_.where(product, {category: "HoTo"} && {producer: "SCA"} )).length
+    const taloR = (_.where(product, {category: "HoTo"} && {producer: "R.OY"} )).length
+    const taloOthers =(_.where(product, {category: "HoTo"} && {producer: "Others"} )).length
 
-    const wcMt = 34
-    const wcSca = 40
-    const wcR = 26
-    const wcOthers = 0
+    const wcMt = (_.where(product, {category: "ToTi"} && {producer: "MT"} )).length
+    const wcSca = (_.where(product, {category: "ToTi"} && {producer: "SCA"} )).length
+    const wcR = (_.where(product, {category: "ToTi"} && {producer: "R.OY"} )).length
+    const wcOthers =(_.where(product, {category: "ToTi"} && {producer: "Others"} )).length
 
 
     const nenä = nenaMt + nenasca+ nenaR+ nenaOthers
@@ -959,15 +975,12 @@ myApp.controller('pieController', ['$scope', '$routeParams', 'cityService', func
     myCanvas.height = 300;
     let myData = {
 
-        //"SCA": (_.where(product, {producer: "SCA"} )).length,
-        //"MT": _.where(product, {producer: "MT"} ),
-        //"R. OY": _.where(product, {producer: "R.OY"} ),
-        //"Others": _.where(product, {producer: "Others"} ),
+        "SCA": (_.where(product, {producer: "SCA"} )).length,
+        "MT":( _.where(product, {producer: "MT"} )).length,
+        "R. OY": (_.where(product, {producer: "R.OY"} )).length,
+        "Others":( _.where(product, {producer: "Others"} )).length
 
-        "MT": 325,
-        "R. OY": 425,
-        "SCA": 255,
-        "Others": 125
+
     };
 
 
@@ -1095,7 +1108,45 @@ myApp.controller('productController', ['$scope', '$routeParams', 'cityService', 
     $scope.city = cityService.city;
 
 }]);
-myApp.controller('areaController', [ function() {
-   let items =  _.where(product, {producer: "SCA"} )
+myApp.controller('areaController', ['$scope', function($scope) {
+
+
+// creating the sizes of each modules in the shop
+
+    $scope.sizeForm = function(shelve) {
+        module.push({
+            number : module.length,
+            height:shelve.height,
+            shelveWidth : shelve.shelveWidth,
+            shelveArea : ""
+        })
+        localStorage.setItem('module', JSON.stringify(module))
+        $scope.showTheForm = false;
+        console.log(module)
+// storing area of every shelve
+        module.forEach(function (amodule) {
+
+            amodule.shelveArea = amodule.height * amodule.shelveWidth
+
+            localStorage.setItem('module' , JSON.stringify(module))
+            console.log(module)
+
+
+            console.log(module.sum("shelveArea"))
+
+            console.log(product.sum("productArea"))
+
+
+
+
+        })
+
+    }
+    $scope.modals = module;
+    $scope.deadSpace = module.sum("shelveArea") - product.sum("productArea") - 1
+
+
+
+
 
 }]);
